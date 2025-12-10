@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Unggah Gambar</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #upload-form { border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+        #message { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Halaman Admin untuk Unggah Gambar</h1>
+    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+        <label for="image">Pilih gambar untuk diunggah:</label><br><br>
+        <input type="file" id="image" name="image" accept="image/*" required>
+        <br><br>
+        <button type="submit">Unggah</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        const form = document.getElementById('upload-form');
+        const messageDiv = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Mencegah form submit secara default
+
+            const formData = new FormData(form);
+            messageDiv.textContent = 'Mengunggah...';
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.text();
+
+                if (response.ok) {
+                    messageDiv.textContent = result;
+                    messageDiv.style.color = 'green';
+                    form.reset(); // Kosongkan form setelah berhasil
+                } else {
+                    throw new Error(result);
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Gagal mengunggah: ' + error.message;
+                messageDiv.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
