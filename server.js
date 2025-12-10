@@ -1,5 +1,3 @@
-// server.js
-
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -19,7 +17,7 @@ cloudinary.config({
 });
 
 // Menyajikan file statis dari folder 'public'
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Konfigurasi Multer untuk penyimpanan ke Cloudinary
 const storage = new CloudinaryStorage({
@@ -54,6 +52,11 @@ app.get('/images', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server berjalan di http://localhost:${PORT}`);
-});
+// Export app untuk Vercel
+module.exports = app;
+
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server berjalan di http://localhost:${PORT}`);
+    });
+}
